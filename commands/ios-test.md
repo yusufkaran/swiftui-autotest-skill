@@ -47,28 +47,9 @@ Bu komut iOS/SwiftUI uygulamasini derleyip simulator'da acarak computer use ile 
    - Verilmemisse ve tek scheme varsa onu kullan
    - Birden fazla varsa kullaniciya sor
 
-### Phase 2: Build
+### Phase 2: Simulator Selection (BUILD'DEN ONCE)
 
-1. Secilen scheme'i simulator icin derle:
-   ```bash
-   xcodebuild build \
-     -workspace MyApp.xcworkspace \
-     -scheme MyApp \
-     -destination 'platform=iOS Simulator,name=iPhone 16' \
-     -derivedDataPath ./DerivedData \
-     2>&1
-   ```
-
-2. Build basarisiz olursa:
-   - Hata mesajlarini analiz et
-   - Duzeltme onerileri sun
-   - DUR — build basarisiz iken test etmeye calisma
-
-3. Build uyarilarini da raporla (ama durma)
-
-### Phase 3: Simulator Selection
-
-Simulator secim mantigi:
+**ONEMLI: Simulator secimi build'den once yapilmalidir. Build komutu secilen cihaz ismini kullanir.**
 
 1. `--device` argumani verildiyse:
    - O cihazi bul: `xcrun simctl list devices --json`
@@ -80,13 +61,14 @@ Simulator secim mantigi:
    ```
 
    - **Hic booted simulator yoksa:**
-     Son kullanilan iPhone cihazini oner, kullaniciya "Bu cihazda test koşayım mı?" diye sor.
+     Mevcut cihazlari listele:
+     ```bash
+     xcrun simctl list devices available --json
+     ```
+     En uygun iPhone'u oner, kullaniciya "Bu cihazda test koşayım mı?" diye sor.
      Onaylarsa boot et:
      ```bash
      xcrun simctl boot <device-udid>
-     ```
-     Sonra Simulator uygulamasini ac:
-     ```bash
      open -a Simulator
      ```
 
@@ -103,6 +85,26 @@ Simulator secim mantigi:
 
      Hangisinde test koşayım?
      ```
+
+### Phase 3: Build
+
+1. Secilen cihaz ismiyle build et:
+   ```bash
+   xcodebuild build \
+     -workspace MyApp.xcworkspace \
+     -scheme MyApp \
+     -destination 'platform=iOS Simulator,name=<SECILEN_CIHAZ>' \
+     -derivedDataPath ./DerivedData \
+     2>&1
+   ```
+   **ASLA sabit bir cihaz ismi (ornegin "iPhone 16") hardcode etme. Her zaman Phase 2'de secilen cihazi kullan.**
+
+2. Build basarisiz olursa:
+   - Hata mesajlarini analiz et
+   - Duzeltme onerileri sun
+   - DUR — build basarisiz iken test etmeye calisma
+
+3. Build uyarilarini da raporla (ama durma)
 
 ### Phase 4: Install & Launch
 

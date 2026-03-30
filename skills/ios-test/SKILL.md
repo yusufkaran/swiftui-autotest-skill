@@ -35,30 +35,33 @@ Use this skill to build an iOS/SwiftUI application, launch it in the Simulator, 
   - If only one scheme exists, use it automatically
   - If multiple, ask the user
 
-### 2) Build
+### 2) Simulator Selection (BEFORE build)
 
-- Build the selected scheme for Simulator:
-  ```bash
-  xcodebuild build \
-    -workspace MyApp.xcworkspace \
-    -scheme MyApp \
-    -destination 'platform=iOS Simulator,name=iPhone 16' \
-    -derivedDataPath ./DerivedData \
-    2>&1
-  ```
-- If build fails: analyze errors, suggest fixes, and **STOP** — never proceed to testing with a failed build
-- Report build warnings (but don't stop)
-
-### 3) Simulator Selection
+**IMPORTANT: Simulator must be selected BEFORE building. The build command uses the selected device name.**
 
 - If `--device` is provided: find that device via `xcrun simctl list devices --json`
 - If `--device` is not provided, check booted simulators:
   ```bash
   xcrun simctl list devices booted --json
   ```
-  - **No booted simulator**: suggest the most recent iPhone, ask for confirmation, then boot it
+  - **No booted simulator**: list available devices with `xcrun simctl list devices available --json`, suggest the best iPhone match, ask for confirmation, then boot it
   - **One booted simulator**: use it directly, no questions
   - **Multiple booted**: list them and ask the user which one to use
+
+### 3) Build
+
+- Build the selected scheme using the device chosen in step 2:
+  ```bash
+  xcodebuild build \
+    -workspace MyApp.xcworkspace \
+    -scheme MyApp \
+    -destination 'platform=iOS Simulator,name=<SELECTED_DEVICE>' \
+    -derivedDataPath ./DerivedData \
+    2>&1
+  ```
+  **NEVER hardcode a device name like "iPhone 16". Always use the device selected in step 2.**
+- If build fails: analyze errors, suggest fixes, and **STOP** — never proceed to testing with a failed build
+- Report build warnings (but don't stop)
 
 ### 4) Install & Launch
 
