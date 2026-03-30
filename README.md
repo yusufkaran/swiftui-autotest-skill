@@ -20,6 +20,30 @@ Then open your SwiftUI project in Claude Code and say:
 
 The agent will find your `.xcodeproj`, select a Simulator, build and install the app, navigate through every screen with computer use, screenshot each state, and produce a test report. No code is modified unless you explicitly approve changes.
 
+## Prerequisites: Enable Computer Use
+
+`/ios-test` requires Claude Code's **computer use** feature to see and interact with your screen. This is a one-time setup:
+
+1. **Enable the MCP server** — In Claude Code, run:
+   ```
+   /mcp
+   ```
+   Find `computer-use` in the list and select **Enable**.
+
+2. **Grant macOS permissions** — The first time computer use runs, macOS will ask for two permissions:
+   - **Accessibility** — lets Claude click, type, and scroll
+   - **Screen Recording** — lets Claude see your screen
+
+   Grant both in **System Settings > Privacy & Security**. You may need to restart Claude Code after granting Screen Recording.
+
+3. **Requirements:**
+   - macOS only (not available on Linux/Windows)
+   - Claude Code **v2.1.85** or later (`claude --version` to check)
+   - **Pro or Max plan** (not available on free, Team, or Enterprise plans)
+   - Interactive session (not available with the `-p` flag)
+
+> **Note:** `/add-accessibility` does **not** require computer use — it only reads and edits source files.
+
 ## Why Visual Testing Matters
 
 Unit tests verify logic. UI tests verify layouts, navigation, and user flows — but writing them takes time and maintaining them takes more. Computer use lets Claude **see and interact** with your app the way a real user would, without a single line of test code.
