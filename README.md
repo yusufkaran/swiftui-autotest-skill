@@ -1,217 +1,266 @@
 # SwiftUI Test Skill
 
-Claude Code ile iOS/SwiftUI uygulamalarini otomatik test eden ve accessibility altyapisini hazirlayan skill seti.
+Open-source Agent Skills for automated visual testing and accessibility setup of iOS/SwiftUI applications using Claude Code's computer use.
 
-Computer use ile simulator'da gorsel test yapar, memory leak arar, accessibility identifier'lari ekler — hepsi terminalden, tek komutla.
+Build, launch in the Simulator, visually test every screen, detect crashes, analyze memory leaks, and add accessibility identifiers — all from the terminal, in a single command.
 
-## Icerdigi Skill'ler
+## Quick Start
 
-| Skill | Komut | Ne Yapar |
-|-------|-------|----------|
-| **iOS Test** | `/ios-test` | Build, simulator, computer use ile gorsel test, crash log, state testing, performance analizi |
-| **Add Accessibility** | `/add-accessibility` | SwiftUI view'lara `{screen}-{type}-{name}` pattern'i ile accessibility identifier ekler |
-
-## Kurulum
-
-### Yontem 1: npx skills (onerilen)
+Install both skills:
 
 ```bash
-npx skills add https://github.com/anthropics/swiftui-test-skill
+npx skills add https://github.com/yusufkaran/swiftui-test-skill
 ```
 
-Kurulum sirasinda scope secmeniz istenir:
+Then open your SwiftUI project in Claude Code and say:
+
+> Use the /ios-test skill to build the app, launch it in the Simulator, and test all screens.
+
+The agent will find your `.xcodeproj`, select a Simulator, build and install the app, navigate through every screen with computer use, screenshot each state, and produce a test report. No code is modified unless you explicitly approve changes.
+
+## Why Visual Testing Matters
+
+Unit tests verify logic. UI tests verify layouts, navigation, and user flows — but writing them takes time and maintaining them takes more. Computer use lets Claude **see and interact** with your app the way a real user would, without a single line of test code.
+
+Accessibility identifiers make this faster and more reliable — and they also make your app work with VoiceOver, which is a requirement for many App Store categories.
+
+## How It Works
 
 ```
-? Skill'i hangi kapsamda yuklemek istersiniz?
-
-  1. User Scope (Kullanici)
-     Tum projelerinizde gecerli olur.
-     → ~/.claude/commands/ dizinine yuklenir
-
-  2. Project Scope (Proje)
-     Sadece bu repository icin gecerli.
-     Projeyi ceken diger gelistiriciler de kullanabilir.
-     → .claude/commands/ dizinine yuklenir ve git'e dahil edilir
-
-  3. Local Scope (Yerel)
-     Sadece bu projede, sadece bu bilgisayarda gecerli.
-     → .claude/commands/ dizinine yuklenir ve .gitignore'a eklenir
+/ios-test                          /add-accessibility
+   │                                      │
+   ├─ Find .xcodeproj/.xcworkspace        ├─ Scan all SwiftUI files
+   ├─ Select Simulator (smart logic)      ├─ Find interactive elements
+   ├─ Build with xcodebuild               ├─ Skip elements that already
+   ├─ Install & launch app                │  have identifiers
+   ├─ Computer use: navigate & test       ├─ Generate {screen}-{type}-{name}
+   ├─ Screenshot each screen              ├─ Add .accessibilityIdentifier()
+   ├─ Check crash logs                    ├─ Flag Dynamic Type issues
+   ├─ (optional) State testing            └─ Summary report
+   ├─ (optional) Performance analysis
+   └─ Test report
 ```
 
-### Yontem 2: Claude Code Plugin Marketplace
+The recommended workflow: run `/add-accessibility` first to make your views identifiable, then run `/ios-test` to test them.
 
-#### 1. Marketplace ekle
+## What It Checks
+
+| Check | What the agent looks for |
+|-------|--------------------------|
+| **Screen rendering** | Layout overflow, overlapping views, empty areas, truncated text |
+| **Navigation** | Every TabView tab, every NavigationLink, back navigation |
+| **Interactive elements** | Buttons respond to taps, toggles switch, sliders move |
+| **Crash detection** | Simulator crash logs analyzed with stack traces and source references |
+| **Empty state** | Meaningful message shown when no data is available |
+| **Error state** | Clear error message with retry option |
+| **Loading state** | Loading indicator visible, UI not frozen |
+| **Memory usage** | RAM footprint per screen, before/after comparison on navigation |
+| **Memory leaks** | `leaks` command on running process, retain cycle detection |
+| **Accessibility gaps** | Missing identifiers on Button, TextField, Image, Toggle, Picker, etc. |
+| **Dynamic Type** | Missing `lineLimit`, `minimumScaleFactor`, hardcoded font sizes |
+
+## Included Skills
+
+| Skill | Command | Purpose |
+|-------|---------|---------|
+| **iOS Test** | `/ios-test` | Build, launch, visually test with computer use, crash logs, state testing, performance analysis |
+| **Add Accessibility** | `/add-accessibility` | Scan SwiftUI views and add `{screen}-{type}-{name}` accessibility identifiers |
+
+## Usage
+
+### /ios-test
 
 ```bash
-/plugin marketplace add anthropics/swiftui-test-skill
+# Test all screens (default)
+/ios-test
+
+# Test a specific user flow
+/ios-test --flow=onboarding
+
+# Test a specific screen
+/ios-test --screen=LoginView
+
+# Choose a Simulator device
+/ios-test --device="iPhone 16"
+
+# Specify Xcode scheme
+/ios-test --scheme=MyApp
+
+# Test empty, error, and loading states via launch arguments
+/ios-test --states
+
+# Measure RAM per screen and check for memory leaks
+/ios-test --performance
+
+# Screenshot every step
+/ios-test --screenshot-all
+
+# Combine options
+/ios-test --flow=checkout --states --performance --screenshot-all
 ```
 
-#### 2. Scope secip kur
+**Simulator selection** is automatic:
+- One booted Simulator → uses it directly, no questions asked
+- Multiple booted → lists them and asks which one to use
+- None booted → suggests the most recent iPhone device, asks for confirmation
 
-**User Scope** — tum projelerde gecerli:
+**Natural language** also works — just say "test the app", "run it in the Simulator", "check for crashes", or "test the onboarding flow".
+
+### /add-accessibility
+
 ```bash
-/plugin install swiftui-test-skill --scope=user
+# Scan entire project and add identifiers
+/add-accessibility
+
+# Preview changes without modifying files
+/add-accessibility --dry-run
+
+# Scan a specific directory
+/add-accessibility --path=Sources/Features/Login
+
+# Verbose output for each identifier added
+/add-accessibility --verbose
 ```
 
-**Project Scope** — sadece bu repo, takim arkadaslarin da kullanir:
+**Natural language** also works — "add accessibility identifiers", "make views testable", "add VoiceOver support".
+
+#### Naming Convention
+
+All identifiers follow `{screen}-{type}-{name}`:
+
+| Source | Generated Identifier |
+|--------|---------------------|
+| `LoginView.swift` → `Button("Continue")` | `login-button-continue` |
+| `LoginView.swift` → `TextField("Email")` | `login-textfield-email` |
+| `LoginView.swift` → `SecureField("Password")` | `login-securefield-password` |
+| `SettingsView.swift` → `Toggle("Notifications")` | `settings-toggle-notifications` |
+| `HomeView.swift` → `Image(systemName: "gear")` | `home-image-gear` |
+| `ProfileView.swift` → `HStack { }.onTapGesture` | `profile-tap-user-row` |
+
+Screen name is derived from the filename (`LoginView.swift` → `login`). Elements that already have identifiers are skipped — existing code is never modified.
+
+## Installation
+
+### Option A: Using skills.sh (recommended)
+
 ```bash
-/plugin install swiftui-test-skill --scope=project
+npx skills add https://github.com/yusufkaran/swiftui-test-skill
 ```
 
-**Local Scope** — sadece bu repo, sadece bu bilgisayar:
+During installation, choose your preferred scope:
+
+| Scope | Where it's installed | Who can use it | Shared via git |
+|-------|---------------------|----------------|----------------|
+| **User** | `~/.claude/commands/` | You, in all projects | No |
+| **Project** | `.claude/commands/` | Everyone who clones the repo | Yes |
+| **Local** | `.claude/commands/` (gitignored) | You, in this project only | No |
+
+### Option B: Claude Code Plugin
+
+1. Add the marketplace:
+
 ```bash
-/plugin install swiftui-test-skill --scope=local
+/plugin marketplace add yusufkaran/swiftui-test-skill
 ```
 
-#### Project Scope icin `.claude/settings.json` yapilandirmasi
+2. Install the plugin:
 
-Projeyi ceken diger gelistiricilerin otomatik erisimi icin:
+```bash
+/plugin install swiftui-test-skill@swiftui-test-skill
+```
+
+To enable for everyone in a repository, add to `.claude/settings.json`:
 
 ```json
 {
   "enabledPlugins": {
-    "swiftui-test-skill@ios-test": true,
-    "swiftui-test-skill@add-accessibility": true
+    "swiftui-test-skill@swiftui-test-skill": true
   },
   "extraKnownMarketplaces": {
     "swiftui-test-skill": {
       "source": {
         "source": "github",
-        "repo": "anthropics/swiftui-test-skill"
+        "repo": "yusufkaran/swiftui-test-skill"
       }
     }
   }
 }
 ```
 
-Takim uyeleriniz projeyi actiginda Claude Code skill'i kurmalarini ister.
+When team members open the project, Claude Code will prompt them to install the skill.
 
-### Yontem 3: Manuel kurulum
+### Option C: Manual Install
 
 ```bash
-git clone https://github.com/anthropics/swiftui-test-skill.git
+git clone https://github.com/yusufkaran/swiftui-test-skill.git
 ```
 
-Dosyalari scope'a gore kopyalayin:
-
-| Scope | Hedef Dizin | Git'e Dahil |
-|-------|-------------|-------------|
-| User | `~/.claude/commands/` | Hayir |
-| Project | `.claude/commands/` | Evet |
-| Local | `.claude/commands/` + `.gitignore`'a ekle | Hayir |
+Copy files based on your preferred scope:
 
 ```bash
-# User scope
-cp commands/*.md ~/.claude/commands/
+# User scope — available in all your projects
+cp swiftui-test-skill/commands/*.md ~/.claude/commands/
 
-# Project scope
+# Project scope — shared with your team via git
 mkdir -p .claude/commands
-cp commands/*.md .claude/commands/
+cp swiftui-test-skill/commands/*.md .claude/commands/
 
-# Local scope
+# Local scope — this project only, not committed
 mkdir -p .claude/commands
-cp commands/*.md .claude/commands/
+cp swiftui-test-skill/commands/*.md .claude/commands/
 echo ".claude/commands/ios-test.md" >> .gitignore
 echo ".claude/commands/add-accessibility.md" >> .gitignore
 ```
 
-## Kullanim
+## Requirements
 
 ### /ios-test
-
-Uygulamayi derler, simulator'da acar ve computer use ile gorsel test yapar.
-
-```bash
-# Tum ekranlari test et
-/ios-test
-
-# Belirli bir flow
-/ios-test --flow=onboarding
-
-# Belirli bir ekran
-/ios-test --screen=LoginView
-
-# Cihaz sec
-/ios-test --device="iPhone 16"
-
-# State testing (empty, error, loading)
-/ios-test --states
-
-# Performance analizi (RAM, memory leak)
-/ios-test --performance
-
-# Her adimda screenshot
-/ios-test --screenshot-all
-
-# Hepsini birden
-/ios-test --flow=checkout --states --performance --screenshot-all
-```
-
-Dogal dil ile de calisir:
-- "uygulamayi test et"
-- "simulatorde calistir"
-- "crash var mi bak"
-- "ekranlari kontrol et"
-
-### /add-accessibility
-
-SwiftUI view'lara accessibility identifier ekler.
-
-```bash
-# Tum projeyi tara ve ekle
-/add-accessibility
-
-# Onizleme (degisiklik yapma)
-/add-accessibility --dry-run
-
-# Belirli klasor
-/add-accessibility --path=Sources/Features/Login
-
-# Detayli log
-/add-accessibility --verbose
-```
-
-Dogal dil ile de calisir:
-- "accessibility ekle"
-- "identifier ekle"
-- "VoiceOver destegi ekle"
-
-#### Naming Convention
-
-```
-{screen}-{type}-{name}
-```
-
-| Ornek | Sonuc |
-|-------|-------|
-| `LoginView.swift` > `Button("Continue")` | `login-button-continue` |
-| `LoginView.swift` > `TextField("Email")` | `login-textfield-email` |
-| `SettingsView.swift` > `Toggle("Notifications")` | `settings-toggle-notifications` |
-| `HomeView.swift` > `Image(systemName: "gear")` | `home-image-gear` |
-
-## Gereksinimler
-
-### /ios-test icin
 - macOS
 - Xcode + iOS Simulator
-- Claude Code v2.1.85+ (computer use destegi)
-- Pro veya Max plan (computer use icin)
-- `computer-use` MCP server etkin (`/mcp` ile etkinlestir)
+- Claude Code v2.1.85+ (computer use support)
+- Pro or Max plan (required for computer use)
+- `computer-use` MCP server enabled (run `/mcp` to enable)
 
-### /add-accessibility icin
-- SwiftUI projesi (ek bagimliligi yok)
+### /add-accessibility
+- Any SwiftUI project (no additional dependencies)
 
-## Scope Rehberi
+## Skill Structure
 
-Hangi scope'u secmelisiniz?
+```text
+swiftui-test-skill/
+  README.md
+  LICENSE
+  .claude-plugin/
+    plugin.json
+    marketplace.json
+  commands/
+    ios-test.md          — Build, Simulator, computer use testing,
+                           crash logs, state testing, performance
+    add-accessibility.md — Accessibility identifier generation,
+                           Dynamic Type checks
+```
 
-| Durum | Onerilen Scope |
-|-------|---------------|
-| Sadece ben kullanacagim, tum projelerimde | **User** |
-| Tum takim kullanacak, repo'ya dahil olsun | **Project** |
-| Denemek istiyorum, repo'ya karismadan | **Local** |
-| Acik kaynak proje, katkilcilar da kullansin | **Project** |
+## Who This Is For
 
-## Lisans
+- iOS developers who want to test their SwiftUI apps visually without writing XCUITest
+- Solo developers who don't have a QA team
+- Teams that want consistent, repeatable test runs across projects
+- Developers preparing for App Store review and need accessibility compliance
+- Anyone who wants to catch layout bugs, crashes, and memory leaks before users do
 
-MIT
+## Which Scope Should I Choose?
+
+| Situation | Recommended Scope |
+|-----------|------------------|
+| Personal use across all my projects | **User** |
+| Entire team should use it, commit to repo | **Project** |
+| Trying it out, don't want to affect the repo | **Local** |
+| Open-source project, contributors should have it | **Project** |
+
+## Contributing
+
+Contributions are welcome! Open an issue or submit a pull request.
+
+## License
+
+This project is available under the MIT License. See [LICENSE](LICENSE) for details.
