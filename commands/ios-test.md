@@ -122,6 +122,25 @@ Simulator secim mantigi:
    defaults read /path/to/MyApp.app/Info.plist CFBundleIdentifier
    ```
 
+### Phase 4.5: Accessibility Check (before testing)
+
+Build basarili olduktan sonra, test asamasina gecmeden once:
+
+1. Projedeki SwiftUI dosyalarini hizlica tara
+2. Interactive elemanlarda (Button, TextField, Toggle vb.) `.accessibilityIdentifier()` olup olmadigini kontrol et
+3. Eger cogu elemanda identifier eksikse, kullaniciya sor:
+
+```
+⚠️ Accessibility identifier'lar eksik (47 eleman / 52 elemandan).
+Identifier'lar test sirasinda elemanlari daha guvenilir bulmami saglar.
+
+Simdi /add-accessibility calistirip ekleyeyim mi?
+(Hayir derseniz koordinat bazli test yaparim — daha yavas ve kirilgan olabilir)
+```
+
+4. Kullanici evet derse → `/add-accessibility` akisini calistir, sonra teste devam et
+5. Kullanici hayir derse → koordinat + gorsel analiz ile teste devam et
+
 ### Phase 5: Computer Use ile Test
 
 **ONEMLI: Bu asamada computer use (MCP server) gereklidir.**

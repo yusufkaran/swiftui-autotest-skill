@@ -86,6 +86,25 @@ Computer use is not enabled. Required for visual testing.
 Run /mcp and enable the computer-use server.
 ```
 
+### 4.5) Accessibility Check (before testing)
+
+After a successful build, before starting visual tests:
+
+1. Quickly scan SwiftUI files in the project
+2. Check if interactive elements (Button, TextField, Toggle, etc.) have `.accessibilityIdentifier()`
+3. If most elements are missing identifiers, ask the user:
+
+```
+⚠️ Accessibility identifiers are missing (47 of 52 elements).
+Identifiers help me find elements more reliably during testing.
+
+Run /add-accessibility to add them now?
+(If you skip this, I'll use coordinate-based testing — slower and more fragile)
+```
+
+4. If the user says yes → run the `/add-accessibility` workflow, then continue to testing
+5. If the user says no → continue with coordinate + visual analysis
+
 #### Default test (no arguments)
 
 Discover and test all main screens:
