@@ -147,8 +147,12 @@ Simdi /add-accessibility calistirip identifier'lari ekleyeyim mi?
 ```
 
 5. **Kullanicinin cevabini BEKLE.** Cevap almadan teste gecme.
-6. Kullanici evet derse → `/add-accessibility` skill'indeki tum adimlari calistir (scan, generate, apply), sonra teste devam et
-7. Kullanici hayir derse → koordinat + gorsel analiz ile teste devam et
+6. Kullanici evet derse:
+   a. `/add-accessibility` skill'indeki tum adimlari calistir (scan, generate, apply)
+   b. Identifier'lar eklendikten sonra **TEKRAR BUILD AL** (Phase 3'u tekrarla) — kod degisti, eski build gecersiz
+   c. Yeni build basarili olursa → uygulamayi tekrar install & launch et (Phase 4'u tekrarla)
+   d. Sonra teste devam et
+7. Kullanici hayir derse → koordinat + gorsel analiz ile teste devam et (rebuild gerekmez)
 
 ### Phase 5: Computer Use ile Test
 

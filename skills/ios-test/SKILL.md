@@ -112,8 +112,12 @@ Run /add-accessibility to add identifiers now?
 ```
 
 5. **WAIT for the user's response.** Do not proceed to testing without an answer.
-6. If yes → run the full `/add-accessibility` workflow (scan, generate, apply), then continue to testing
-7. If no → continue with coordinate + visual analysis
+6. If yes:
+   a. Run the full `/add-accessibility` workflow (scan, generate, apply)
+   b. After identifiers are added, **REBUILD the app** (repeat step 3) — code changed, old build is stale
+   c. If rebuild succeeds → reinstall & relaunch the app (repeat step 4)
+   d. Then continue to testing
+7. If no → continue with coordinate + visual analysis (no rebuild needed)
 
 #### Default test (no arguments)
 
