@@ -24,5 +24,6 @@
   "skills": [
     "./skills/ios-test",
     "./skills/add-accessibility"
-  ]
+  ],
+  "postinstall": "./postinstall.sh"
 }

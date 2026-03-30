@@ -173,13 +173,13 @@ Screen name is derived from the filename (`LoginView.swift` → `login`). Elemen
 npx skills add https://github.com/yusufkaran/swiftui-autotest-skill
 ```
 
-During installation, choose your preferred scope:
+Then register the slash commands so `/ios-test` and `/add-accessibility` work directly:
 
-| Scope | Where it's installed | Who can use it | Shared via git |
-|-------|---------------------|----------------|----------------|
-| **User** | `~/.claude/commands/` | You, in all projects | No |
-| **Project** | `.claude/commands/` | Everyone who clones the repo | Yes |
-| **Local** | `.claude/commands/` (gitignored) | You, in this project only | No |
+```bash
+bash .agents/skills/swiftui-autotest-skill/postinstall.sh
+```
+
+This creates symlinks in `.claude/commands/` pointing to the installed skill files. You only need to run this once after installation.
 
 ### Option B: Claude Code Plugin
 
