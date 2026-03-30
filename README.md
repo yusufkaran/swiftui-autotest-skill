@@ -233,11 +233,14 @@ swiftui-test-skill/
   .claude-plugin/
     plugin.json
     marketplace.json
-  commands/
-    ios-test.md          — Build, Simulator, computer use testing,
-                           crash logs, state testing, performance
-    add-accessibility.md — Accessibility identifier generation,
-                           Dynamic Type checks
+  commands/                          ← Claude Code native format
+    ios-test.md
+    add-accessibility.md
+  skills/                            ← skills.sh / npx format
+    ios-test/
+      SKILL.md
+    add-accessibility/
+      SKILL.md
 ```
 
 ## Who This Is For

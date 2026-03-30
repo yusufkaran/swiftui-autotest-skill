@@ -1,7 +1,7 @@
 {
   "name": "swiftui-test-skill",
   "version": "1.0.0",
-  "description": "iOS/SwiftUI uygulamalarini otomatik test eden ve accessibility altyapisini hazirlayan skill seti. Build, simulator, computer use ile gorsel test, memory leak analizi ve accessibility identifier ekleme.",
+  "description": "AI-powered visual testing and accessibility setup for iOS/SwiftUI apps. Build, launch in Simulator, test with computer use, detect crashes, analyze memory leaks, and add accessibility identifiers.",
   "author": {
     "name": "Yusuf Karan"
   },
@@ -20,5 +20,9 @@
   ],
   "commands": [
     "./commands"
+  ],
+  "skills": [
+    "./skills/ios-test",
+    "./skills/add-accessibility"
   ]
 }
