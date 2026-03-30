@@ -1,4 +1,4 @@
-# iOS Tester Skill
+# SwiftUI Test Skill
 
 Claude Code ile iOS/SwiftUI uygulamalarini otomatik test eden ve accessibility altyapisini hazirlayan skill seti.
 
@@ -16,7 +16,7 @@ Computer use ile simulator'da gorsel test yapar, memory leak arar, accessibility
 ### Yontem 1: npx skills (onerilen)
 
 ```bash
-npx skills add https://github.com/anthropics/ios-tester-skill
+npx skills add https://github.com/anthropics/swiftui-test-skill
 ```
 
 Kurulum sirasinda scope secmeniz istenir:
@@ -43,24 +43,24 @@ Kurulum sirasinda scope secmeniz istenir:
 #### 1. Marketplace ekle
 
 ```bash
-/plugin marketplace add anthropics/ios-tester-skill
+/plugin marketplace add anthropics/swiftui-test-skill
 ```
 
 #### 2. Scope secip kur
 
 **User Scope** — tum projelerde gecerli:
 ```bash
-/plugin install ios-tester --scope=user
+/plugin install swiftui-test-skill --scope=user
 ```
 
 **Project Scope** — sadece bu repo, takim arkadaslarin da kullanir:
 ```bash
-/plugin install ios-tester --scope=project
+/plugin install swiftui-test-skill --scope=project
 ```
 
 **Local Scope** — sadece bu repo, sadece bu bilgisayar:
 ```bash
-/plugin install ios-tester --scope=local
+/plugin install swiftui-test-skill --scope=local
 ```
 
 #### Project Scope icin `.claude/settings.json` yapilandirmasi
@@ -70,14 +70,14 @@ Projeyi ceken diger gelistiricilerin otomatik erisimi icin:
 ```json
 {
   "enabledPlugins": {
-    "ios-tester@ios-test": true,
-    "ios-tester@add-accessibility": true
+    "swiftui-test-skill@ios-test": true,
+    "swiftui-test-skill@add-accessibility": true
   },
   "extraKnownMarketplaces": {
-    "ios-tester-skill": {
+    "swiftui-test-skill": {
       "source": {
         "source": "github",
-        "repo": "anthropics/ios-tester-skill"
+        "repo": "anthropics/swiftui-test-skill"
       }
     }
   }
@@ -89,7 +89,7 @@ Takim uyeleriniz projeyi actiginda Claude Code skill'i kurmalarini ister.
 ### Yontem 3: Manuel kurulum
 
 ```bash
-git clone https://github.com/anthropics/ios-tester-skill.git
+git clone https://github.com/anthropics/swiftui-test-skill.git
 ```
 
 Dosyalari scope'a gore kopyalayin:

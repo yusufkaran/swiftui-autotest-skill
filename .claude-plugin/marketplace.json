@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/marketplace/marketplace.schema.json",
-  "name": "ios-tester-skill",
+  "name": "swiftui-test-skill",
   "version": "1.0.0",
   "owner": {
     "name": "Yusuf Karan"
@@ -10,9 +10,9 @@
   },
   "plugins": [
     {
-      "name": "ios-tester",
+      "name": "swiftui-test-skill",
       "description": "iOS/SwiftUI uygulamalarini build edip simulator'da test eder, accessibility identifier'lari ekler.",
-      "repository": "https://github.com/yusufkaran/ios-tester-skill",
+      "repository": "https://github.com/yusufkaran/swiftui-test-skill",
       "version": "1.0.0",
       "author": {
         "name": "Yusuf Karan"

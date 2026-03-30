@@ -1,11 +1,11 @@
 {
-  "name": "ios-tester",
+  "name": "swiftui-test-skill",
   "version": "1.0.0",
   "description": "iOS/SwiftUI uygulamalarini otomatik test eden ve accessibility altyapisini hazirlayan skill seti. Build, simulator, computer use ile gorsel test, memory leak analizi ve accessibility identifier ekleme.",
   "author": {
     "name": "Yusuf Karan"
   },
-  "repository": "https://github.com/yusufkaran/ios-tester-skill",
+  "repository": "https://github.com/yusufkaran/swiftui-test-skill",
   "license": "MIT",
   "keywords": [
     "ios",
