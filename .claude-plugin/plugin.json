@@ -1,11 +1,11 @@
 {
-  "name": "swiftui-test-skill",
+  "name": "swiftui-autotest-skill",
   "version": "1.0.0",
   "description": "AI-powered visual testing and accessibility setup for iOS/SwiftUI apps. Build, launch in Simulator, test with computer use, detect crashes, analyze memory leaks, and add accessibility identifiers.",
   "author": {
     "name": "Yusuf Karan"
   },
-  "repository": "https://github.com/yusufkaran/swiftui-test-skill",
+  "repository": "https://github.com/yusufkaran/swiftui-autotest-skill",
   "license": "MIT",
   "keywords": [
     "ios",

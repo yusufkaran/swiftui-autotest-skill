@@ -1,4 +1,6 @@
-# SwiftUI Test Skill
+<img src="assets/banner.jpeg" alt="SwiftUI Test Skill — AI-powered visual testing for SwiftUI apps" />
+
+# SwiftUI Autotest Skill
 
 Open-source Agent Skills for automated visual testing and accessibility setup of iOS/SwiftUI applications using Claude Code's computer use.
 
@@ -9,7 +11,7 @@ Build, launch in the Simulator, visually test every screen, detect crashes, anal
 Install both skills:
 
 ```bash
-npx skills add https://github.com/yusufkaran/swiftui-test-skill
+npx skills add https://github.com/yusufkaran/swiftui-autotest-skill
 ```
 
 Then open your SwiftUI project in Claude Code and say:
@@ -144,7 +146,7 @@ Screen name is derived from the filename (`LoginView.swift` → `login`). Elemen
 ### Option A: Using skills.sh (recommended)
 
 ```bash
-npx skills add https://github.com/yusufkaran/swiftui-test-skill
+npx skills add https://github.com/yusufkaran/swiftui-autotest-skill
 ```
 
 During installation, choose your preferred scope:
@@ -160,13 +162,13 @@ During installation, choose your preferred scope:
 1. Add the marketplace:
 
 ```bash
-/plugin marketplace add yusufkaran/swiftui-test-skill
+/plugin marketplace add yusufkaran/swiftui-autotest-skill
 ```
 
 2. Install the plugin:
 
 ```bash
-/plugin install swiftui-test-skill@swiftui-test-skill
+/plugin install swiftui-autotest-skill@swiftui-autotest-skill
 ```
 
 To enable for everyone in a repository, add to `.claude/settings.json`:
@@ -174,13 +176,13 @@ To enable for everyone in a repository, add to `.claude/settings.json`:
 ```json
 {
   "enabledPlugins": {
-    "swiftui-test-skill@swiftui-test-skill": true
+    "swiftui-autotest-skill@swiftui-autotest-skill": true
   },
   "extraKnownMarketplaces": {
-    "swiftui-test-skill": {
+    "swiftui-autotest-skill": {
       "source": {
         "source": "github",
-        "repo": "yusufkaran/swiftui-test-skill"
+        "repo": "yusufkaran/swiftui-autotest-skill"
       }
     }
   }
@@ -192,22 +194,22 @@ When team members open the project, Claude Code will prompt them to install the 
 ### Option C: Manual Install
 
 ```bash
-git clone https://github.com/yusufkaran/swiftui-test-skill.git
+git clone https://github.com/yusufkaran/swiftui-autotest-skill.git
 ```
 
 Copy files based on your preferred scope:
 
 ```bash
 # User scope — available in all your projects
-cp swiftui-test-skill/commands/*.md ~/.claude/commands/
+cp swiftui-autotest-skill/commands/*.md ~/.claude/commands/
 
 # Project scope — shared with your team via git
 mkdir -p .claude/commands
-cp swiftui-test-skill/commands/*.md .claude/commands/
+cp swiftui-autotest-skill/commands/*.md .claude/commands/
 
 # Local scope — this project only, not committed
 mkdir -p .claude/commands
-cp swiftui-test-skill/commands/*.md .claude/commands/
+cp swiftui-autotest-skill/commands/*.md .claude/commands/
 echo ".claude/commands/ios-test.md" >> .gitignore
 echo ".claude/commands/add-accessibility.md" >> .gitignore
 ```
@@ -227,7 +229,7 @@ echo ".claude/commands/add-accessibility.md" >> .gitignore
 ## Skill Structure
 
 ```text
-swiftui-test-skill/
+swiftui-autotest-skill/
   README.md
   LICENSE
   .claude-plugin/
