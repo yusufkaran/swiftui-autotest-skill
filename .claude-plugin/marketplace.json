@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/marketplace/marketplace.schema.json",
+  "name": "ios-tester-skill",
+  "version": "1.0.0",
+  "owner": {
+    "name": "Yusuf Karan"
+  },
+  "metadata": {
+    "description": "iOS/SwiftUI test automation ve accessibility skill seti. Computer use ile gorsel test, memory leak analizi, accessibility identifier ekleme."
+  },
+  "plugins": [
+    {
+      "name": "ios-tester",
+      "description": "iOS/SwiftUI uygulamalarini build edip simulator'da test eder, accessibility identifier'lari ekler.",
+      "repository": "https://github.com/yusufkaran/ios-tester-skill",
+      "version": "1.0.0",
+      "author": {
+        "name": "Yusuf Karan"
+      },
+      "license": "MIT",
+      "category": "development",
+      "keywords": [
+        "ios",
+        "swiftui",
+        "testing",
+        "accessibility",
+        "simulator",
+        "computer-use",
+        "performance"
+      ],
+      "tags": [
+        "ios",
+        "swiftui",
+        "testing",
+        "accessibility",
+        "xcode",
+        "simulator"
+      ],
+      "source": "./"
+    }
+  ]
+}
