@@ -13,7 +13,7 @@ Bu komut iOS/SwiftUI uygulamasini derleyip simulator'da acarak computer use ile 
 /ios-test
 /ios-test --flow=onboarding
 /ios-test --screen=LoginView
-/ios-test --device="iPhone 16"
+/ios-test --device="iPhone 16 Pro"
 /ios-test --scheme=MyApp
 /ios-test --states
 /ios-test --screenshot-all
@@ -24,7 +24,7 @@ Bu komut iOS/SwiftUI uygulamasini derleyip simulator'da acarak computer use ile 
 
 - `--flow=<name>`: Belirli bir kullanici akisini test et (ornegin: onboarding, login, checkout)
 - `--screen=<ViewName>`: Sadece belirli bir ekrani test et
-- `--device=<name>`: Simulator cihazi belirt (ornegin: "iPhone 16", "iPhone SE")
+- `--device=<name>`: Simulator cihazi belirt (ornegin: "iPhone 16 Pro", "iPhone SE")
 - `--scheme=<name>`: Xcode scheme belirt
 - `--states`: Empty, error ve loading state'lerini launch argument'lari ile test et
 - `--screenshot-all`: Her adimda screenshot al
@@ -47,7 +47,7 @@ Bu komut iOS/SwiftUI uygulamasini derleyip simulator'da acarak computer use ile 
    - Verilmemisse ve tek scheme varsa onu kullan
    - Birden fazla varsa kullaniciya sor
 
-### Phase 2: Simulator Selection (BUILD'DEN ONCE)
+### Phase 2: Simulator Selection
 
 **ONEMLI: Simulator secimi build'den once yapilmalidir. Build komutu secilen cihaz ismini kullanir.**
 
@@ -76,57 +76,11 @@ Bu komut iOS/SwiftUI uygulamasini derleyip simulator'da acarak computer use ile 
      Direkt onu kullan, soru sorma.
 
    - **Birden fazla booted simulator varsa:**
-     Listeyi goster, kullaniciya hangisini kullanacagini sor:
-     ```
-     Aktif Simulator'ler:
-     1. iPhone 16 Pro (iOS 18.2) - Booted
-     2. iPhone SE (iOS 17.5) - Booted
-     3. iPad Air (iOS 18.2) - Booted
+     Listeyi goster, kullaniciya hangisini kullanacagini sor.
 
-     Hangisinde test koşayım?
-     ```
+### Phase 3: Accessibility Check (ZORUNLU — ATLANMAMALI)
 
-### Phase 3: Build
-
-1. Secilen cihaz ismiyle build et:
-   ```bash
-   xcodebuild build \
-     -workspace MyApp.xcworkspace \
-     -scheme MyApp \
-     -destination 'platform=iOS Simulator,name=<SECILEN_CIHAZ>' \
-     -derivedDataPath ./DerivedData \
-     2>&1
-   ```
-   **ASLA sabit bir cihaz ismi (ornegin "iPhone 16") hardcode etme. Her zaman Phase 2'de secilen cihazi kullan.**
-
-2. Build basarisiz olursa:
-   - Hata mesajlarini analiz et
-   - Duzeltme onerileri sun
-   - DUR — build basarisiz iken test etmeye calisma
-
-3. Build uyarilarini da raporla (ama durma)
-
-### Phase 4: Install & Launch
-
-1. Build edilen .app dosyasini bul:
-   ```bash
-   find ./DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" | head -1
-   ```
-
-2. Simulator'a yukle ve baslat:
-   ```bash
-   xcrun simctl install booted /path/to/MyApp.app
-   xcrun simctl launch booted com.example.MyApp
-   ```
-
-3. Bundle identifier'i bulmak icin:
-   ```bash
-   defaults read /path/to/MyApp.app/Info.plist CFBundleIdentifier
-   ```
-
-### Phase 4.5: Accessibility Check (ZORUNLU ADIM — ATLANMAMALI)
-
-**Bu adim ZORUNLUDUR. Build basarili olduktan sonra, test asamasina gecmeden ONCE mutlaka calistirilmalidir. Bu adimi ASLA atlama.**
+**Bu adim ZORUNLUDUR. Build'den ONCE calistirilir. Bu adimi ASLA atlama.**
 
 1. Projedeki SwiftUI dosyalarini tara — `*.swift` dosyalarinda `struct` ... `: View` pattern'i ara
 2. Bu dosyalarda su interactive elemanlari say: `Button`, `TextField`, `SecureField`, `Toggle`, `Slider`, `Picker`, `DatePicker`, `NavigationLink`, `Image`, `.onTapGesture`
@@ -142,19 +96,53 @@ Bu komut iOS/SwiftUI uygulamasini derleyip simulator'da acarak computer use ile 
 ⚠️ Identifier'lar test sirasinda elemanlari daha guvenilir bulmami saglar.
 
 Simdi /add-accessibility calistirip identifier'lari ekleyeyim mi?
-  → Evet: identifier'lari ekler, sonra teste devam eder
-  → Hayir: koordinat bazli test yaparim (daha yavas ve kirilgan olabilir)
+  → Evet: identifier'lari ekler, sonra build alip teste devam eder
+  → Hayir: direkt build alip koordinat bazli test yaparim (daha yavas ve kirilgan olabilir)
 ```
 
-5. **Kullanicinin cevabini BEKLE.** Cevap almadan teste gecme.
-6. Kullanici evet derse:
-   a. `/add-accessibility` skill'indeki tum adimlari calistir (scan, generate, apply)
-   b. Identifier'lar eklendikten sonra **TEKRAR BUILD AL** (Phase 3'u tekrarla) — kod degisti, eski build gecersiz
-   c. Yeni build basarili olursa → uygulamayi tekrar install & launch et (Phase 4'u tekrarla)
-   d. Sonra teste devam et
-7. Kullanici hayir derse → koordinat + gorsel analiz ile teste devam et (rebuild gerekmez)
+5. **Kullanicinin cevabini BEKLE.** Cevap almadan devam etme.
+6. Kullanici evet derse → `/add-accessibility` skill'indeki tum adimlari calistir (scan, generate, apply), sonra Phase 4 (Build) ile devam et
+7. Kullanici hayir derse → direkt Phase 4 (Build) ile devam et
 
-### Phase 5: Computer Use ile Test
+### Phase 4: Build
+
+1. Secilen cihaz ismiyle build et:
+   ```bash
+   xcodebuild build \
+     -workspace MyApp.xcworkspace \
+     -scheme MyApp \
+     -destination 'platform=iOS Simulator,name=<SECILEN_CIHAZ>' \
+     -derivedDataPath ./DerivedData \
+     2>&1
+   ```
+   **ASLA sabit bir cihaz ismi hardcode etme. Her zaman Phase 2'de secilen cihazi kullan.**
+
+2. Build basarisiz olursa:
+   - Hata mesajlarini analiz et
+   - Duzeltme onerileri sun
+   - DUR — build basarisiz iken test etmeye calisma
+
+3. Build uyarilarini da raporla (ama durma)
+
+### Phase 5: Install & Launch
+
+1. Build edilen .app dosyasini bul:
+   ```bash
+   find ./DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" | head -1
+   ```
+
+2. Bundle identifier'i bul:
+   ```bash
+   plutil -p /path/to/MyApp.app/Info.plist | grep CFBundleIdentifier
+   ```
+
+3. Simulator'a yukle ve baslat:
+   ```bash
+   xcrun simctl install booted /path/to/MyApp.app
+   xcrun simctl launch booted <BUNDLE_ID>
+   ```
+
+### Phase 6: Computer Use ile Test
 
 **ONEMLI: Bu asamada computer use (MCP server) gereklidir.**
 
@@ -192,7 +180,7 @@ Belirtilen kullanici akisini test et. Akis ismine gore davran:
 
 Sadece belirtilen ekrani bul ve test et. O ekrana ulasabilmek icin gerekli navigasyonu yap.
 
-### Phase 6: State Testing (`--states`)
+### Phase 7: State Testing (`--states`)
 
 Bu asama launch argument'lari ile farkli durumlari test eder.
 
@@ -216,8 +204,8 @@ Bu asama launch argument'lari ile farkli durumlari test eder.
 
 3. **Eklendiyse veya zaten varsa** → her state icin uygulamayi yeniden baslat:
    ```bash
-   xcrun simctl terminate booted com.example.MyApp
-   xcrun simctl launch booted com.example.MyApp --show-empty-state
+   xcrun simctl terminate booted <BUNDLE_ID>
+   xcrun simctl launch booted <BUNDLE_ID> --show-empty-state
    ```
 
    Her state'de:
@@ -226,7 +214,7 @@ Bu asama launch argument'lari ile farkli durumlari test eder.
    - **Loading state**: Loading indicator gorunuyor mu? UI kitlenmis gibi durmuyor degil mi?
    - Her state'in screenshot'ini al
 
-### Phase 7: Crash Log Analysis
+### Phase 8: Crash Log Analysis
 
 Test suresince ve sonrasinda crash kontrolu yap:
 
@@ -240,7 +228,7 @@ Test suresince ve sonrasinda crash kontrolu yap:
    - Hangi ekranda / aksiyonda olustugunu belirle
    - Ilgili kodu bul ve neden olabilecegini raporla
 
-### Phase 8: Performance Analysis (`--performance`)
+### Phase 9: Performance Analysis (`--performance`)
 
 **SADECE `--performance` argumani verildiginde calis. Default testte bu asamayi ATLA.**
 
@@ -303,9 +291,9 @@ Bu asama her ekranda RAM kullanimi olcer ve memory leak kontrolu yapar.
 
 - `footprint` ve `leaks` komutlari simulator process'ine erisim gerektirir
 - Eger PID bulunamazsa kullaniciya bildir ve bu asamayi atla
-- Sonuclari ana test raporuna dahil et (Phase 9)
+- Sonuclari ana test raporuna dahil et (Phase 10)
 
-### Phase 9: Test Report
+### Phase 10: Test Report
 
 Test tamamlandiginda ozet rapor goster:
 
@@ -313,7 +301,7 @@ Test tamamlandiginda ozet rapor goster:
 🧪 iOS Test Raporu
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Uygulama:    MyApp (com.example.MyApp)
-Cihaz:       iPhone 16 (iOS 18.2)
+Cihaz:       iPhone 16 Pro (iOS 18.2)
 Scheme:      MyApp
 Sure:        2dk 34sn
 
@@ -324,7 +312,7 @@ Sure:        2dk 34sn
   ✅ OnboardingStep1 - OK
   ✅ OnboardingStep2 - OK
   ✅ OnboardingStep3 - OK
-  ❌ CheckoutView - Crash (NullPointerException line 42)
+  ❌ CheckoutView - Crash (force unwrap on nil)
   ✅ SearchView - OK
 
 📸 Screenshots: 12 adet alinmis

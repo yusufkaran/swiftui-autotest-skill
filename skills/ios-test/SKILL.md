@@ -48,50 +48,9 @@ Use this skill to build an iOS/SwiftUI application, launch it in the Simulator, 
   - **One booted simulator**: use it directly, no questions
   - **Multiple booted**: list them and ask the user which one to use
 
-### 3) Build
+### 3) Accessibility Check (MANDATORY — DO NOT SKIP)
 
-- Build the selected scheme using the device chosen in step 2:
-  ```bash
-  xcodebuild build \
-    -workspace MyApp.xcworkspace \
-    -scheme MyApp \
-    -destination 'platform=iOS Simulator,name=<SELECTED_DEVICE>' \
-    -derivedDataPath ./DerivedData \
-    2>&1
-  ```
-  **NEVER hardcode a device name like "iPhone 16". Always use the device selected in step 2.**
-- If build fails: analyze errors, suggest fixes, and **STOP** — never proceed to testing with a failed build
-- Report build warnings (but don't stop)
-
-### 4) Install & Launch
-
-- Find the built `.app` file:
-  ```bash
-  find ./DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" | head -1
-  ```
-- Get the bundle identifier:
-  ```bash
-  defaults read /path/to/MyApp.app/Info.plist CFBundleIdentifier
-  ```
-- Install and launch:
-  ```bash
-  xcrun simctl install booted /path/to/MyApp.app
-  xcrun simctl launch booted com.example.MyApp
-  ```
-
-### 5) Visual Testing with Computer Use
-
-**IMPORTANT: This phase requires the `computer-use` MCP server to be enabled.**
-
-If computer use is not enabled, tell the user:
-```
-Computer use is not enabled. Required for visual testing.
-Run /mcp and enable the computer-use server.
-```
-
-### 4.5) Accessibility Check (MANDATORY — DO NOT SKIP)
-
-**This step is MANDATORY. After a successful build, BEFORE starting visual tests, this step MUST run. NEVER skip this step.**
+**This step is MANDATORY. Runs BEFORE build. NEVER skip this step.**
 
 1. Scan SwiftUI files in the project — look for `struct` ... `: View` patterns in `*.swift` files
 2. Count interactive elements: `Button`, `TextField`, `SecureField`, `Toggle`, `Slider`, `Picker`, `DatePicker`, `NavigationLink`, `Image`, `.onTapGesture`
@@ -107,17 +66,54 @@ Accessibility Scan Result:
 Identifiers help me find elements more reliably during testing.
 
 Run /add-accessibility to add identifiers now?
-  → Yes: adds identifiers, then continues to testing
-  → No: I'll use coordinate-based testing (slower and more fragile)
+  → Yes: adds identifiers, then builds and continues to testing
+  → No: builds directly and uses coordinate-based testing (slower and more fragile)
 ```
 
-5. **WAIT for the user's response.** Do not proceed to testing without an answer.
-6. If yes:
-   a. Run the full `/add-accessibility` workflow (scan, generate, apply)
-   b. After identifiers are added, **REBUILD the app** (repeat step 3) — code changed, old build is stale
-   c. If rebuild succeeds → reinstall & relaunch the app (repeat step 4)
-   d. Then continue to testing
-7. If no → continue with coordinate + visual analysis (no rebuild needed)
+5. **WAIT for the user's response.** Do not proceed without an answer.
+6. If yes → run the full `/add-accessibility` workflow (scan, generate, apply), then continue to step 4 (Build)
+7. If no → continue to step 4 (Build) directly
+
+### 4) Build
+
+- Build the selected scheme using the device chosen in step 2:
+  ```bash
+  xcodebuild build \
+    -workspace MyApp.xcworkspace \
+    -scheme MyApp \
+    -destination 'platform=iOS Simulator,name=<SELECTED_DEVICE>' \
+    -derivedDataPath ./DerivedData \
+    2>&1
+  ```
+  **NEVER hardcode a device name. Always use the device selected in step 2.**
+- If build fails: analyze errors, suggest fixes, and **STOP** — never proceed to testing with a failed build
+- Report build warnings (but don't stop)
+
+### 5) Install & Launch
+
+- Find the built `.app` file:
+  ```bash
+  find ./DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" | head -1
+  ```
+- Get the bundle identifier:
+  ```bash
+  plutil -p /path/to/MyApp.app/Info.plist | grep CFBundleIdentifier
+  ```
+- Install and launch:
+  ```bash
+  xcrun simctl install booted /path/to/MyApp.app
+  xcrun simctl launch booted <BUNDLE_ID>
+  ```
+
+### 6) Visual Testing with Computer Use
+
+**IMPORTANT: This phase requires the `computer-use` MCP server to be enabled.**
+
+If computer use is not enabled, tell the user:
+```
+Computer use is not enabled. Required for visual testing.
+Run /mcp and enable the computer-use server.
+```
 
 #### Default test (no arguments)
 
@@ -147,7 +143,7 @@ Test the specified user flow:
 
 Find and test only the specified screen. Navigate to it if needed.
 
-### 6) State Testing (`--states` only)
+### 7) State Testing (`--states` only)
 
 Test different app states using launch arguments.
 
@@ -180,7 +176,7 @@ Test different app states using launch arguments.
    - **Loading state**: loading indicator visible, UI not frozen
    - Screenshot each state
 
-### 7) Crash Log Analysis
+### 8) Crash Log Analysis
 
 Check for crashes during and after testing:
 
@@ -193,7 +189,7 @@ If a crash is found:
 - Identify which screen / action triggered it
 - Find the relevant source code and report the likely cause
 
-### 8) Performance Analysis (`--performance` only)
+### 9) Performance Analysis (`--performance` only)
 
 **ONLY run when `--performance` is provided. SKIP in default tests.**
 
@@ -246,7 +242,7 @@ Measure RAM usage per screen and check for memory leaks.
    ⚠️ Potential Leak: 16 MB not released on return to HomeView
    ```
 
-### 9) Test Report
+### 10) Test Report
 
 Show a summary report when testing is complete:
 
