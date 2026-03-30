@@ -124,24 +124,31 @@ Bu komut iOS/SwiftUI uygulamasini derleyip simulator'da acarak computer use ile 
    defaults read /path/to/MyApp.app/Info.plist CFBundleIdentifier
    ```
 
-### Phase 4.5: Accessibility Check (before testing)
+### Phase 4.5: Accessibility Check (ZORUNLU ADIM — ATLANMAMALI)
 
-Build basarili olduktan sonra, test asamasina gecmeden once:
+**Bu adim ZORUNLUDUR. Build basarili olduktan sonra, test asamasina gecmeden ONCE mutlaka calistirilmalidir. Bu adimi ASLA atlama.**
 
-1. Projedeki SwiftUI dosyalarini hizlica tara
-2. Interactive elemanlarda (Button, TextField, Toggle vb.) `.accessibilityIdentifier()` olup olmadigini kontrol et
-3. Eger cogu elemanda identifier eksikse, kullaniciya sor:
+1. Projedeki SwiftUI dosyalarini tara — `*.swift` dosyalarinda `struct` ... `: View` pattern'i ara
+2. Bu dosyalarda su interactive elemanlari say: `Button`, `TextField`, `SecureField`, `Toggle`, `Slider`, `Picker`, `DatePicker`, `NavigationLink`, `Image`, `.onTapGesture`
+3. Bu elemanlarin kacinda `.accessibilityIdentifier()` oldugunu kontrol et
+4. **KULLANICIYA MUTLAKA SOR (bu soru atlanamaz):**
 
 ```
-⚠️ Accessibility identifier'lar eksik (47 eleman / 52 elemandan).
-Identifier'lar test sirasinda elemanlari daha guvenilir bulmami saglar.
+📋 Accessibility Scan Sonucu:
+   Toplam interactive eleman: XX
+   Identifier mevcut: XX
+   Identifier eksik: XX
 
-Simdi /add-accessibility calistirip ekleyeyim mi?
-(Hayir derseniz koordinat bazli test yaparim — daha yavas ve kirilgan olabilir)
+⚠️ Identifier'lar test sirasinda elemanlari daha guvenilir bulmami saglar.
+
+Simdi /add-accessibility calistirip identifier'lari ekleyeyim mi?
+  → Evet: identifier'lari ekler, sonra teste devam eder
+  → Hayir: koordinat bazli test yaparim (daha yavas ve kirilgan olabilir)
 ```
 
-4. Kullanici evet derse → `/add-accessibility` akisini calistir, sonra teste devam et
-5. Kullanici hayir derse → koordinat + gorsel analiz ile teste devam et
+5. **Kullanicinin cevabini BEKLE.** Cevap almadan teste gecme.
+6. Kullanici evet derse → `/add-accessibility` skill'indeki tum adimlari calistir (scan, generate, apply), sonra teste devam et
+7. Kullanici hayir derse → koordinat + gorsel analiz ile teste devam et
 
 ### Phase 5: Computer Use ile Test
 

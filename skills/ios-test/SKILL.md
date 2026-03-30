@@ -89,24 +89,31 @@ Computer use is not enabled. Required for visual testing.
 Run /mcp and enable the computer-use server.
 ```
 
-### 4.5) Accessibility Check (before testing)
+### 4.5) Accessibility Check (MANDATORY — DO NOT SKIP)
 
-After a successful build, before starting visual tests:
+**This step is MANDATORY. After a successful build, BEFORE starting visual tests, this step MUST run. NEVER skip this step.**
 
-1. Quickly scan SwiftUI files in the project
-2. Check if interactive elements (Button, TextField, Toggle, etc.) have `.accessibilityIdentifier()`
-3. If most elements are missing identifiers, ask the user:
+1. Scan SwiftUI files in the project — look for `struct` ... `: View` patterns in `*.swift` files
+2. Count interactive elements: `Button`, `TextField`, `SecureField`, `Toggle`, `Slider`, `Picker`, `DatePicker`, `NavigationLink`, `Image`, `.onTapGesture`
+3. Check how many have `.accessibilityIdentifier()`
+4. **ALWAYS ask the user (this question cannot be skipped):**
 
 ```
-⚠️ Accessibility identifiers are missing (47 of 52 elements).
+Accessibility Scan Result:
+   Total interactive elements: XX
+   With identifier: XX
+   Missing identifier: XX
+
 Identifiers help me find elements more reliably during testing.
 
-Run /add-accessibility to add them now?
-(If you skip this, I'll use coordinate-based testing — slower and more fragile)
+Run /add-accessibility to add identifiers now?
+  → Yes: adds identifiers, then continues to testing
+  → No: I'll use coordinate-based testing (slower and more fragile)
 ```
 
-4. If the user says yes → run the `/add-accessibility` workflow, then continue to testing
-5. If the user says no → continue with coordinate + visual analysis
+5. **WAIT for the user's response.** Do not proceed to testing without an answer.
+6. If yes → run the full `/add-accessibility` workflow (scan, generate, apply), then continue to testing
+7. If no → continue with coordinate + visual analysis
 
 #### Default test (no arguments)
 
